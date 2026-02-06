@@ -206,13 +206,20 @@ def document_analyzer_view(api_key, language):
                     reader = PdfReader(uploaded_file)
                     text = ""
                     for page in reader.pages:
-                        text += page.extract_text()
+                        # Fix: Handle cases where extract_text returns None (scanned pages)
+                        page_text = page.extract_text()
+                        if page_text:
+                            text += page_text
                     
+                    if not text:
+                        st.error("Could not extract text. The PDF might be scanned/image-based.")
+                        return
+
                     st.info(f"Extracted {len(text)} characters.")
                     
                     model = genai.GenerativeModel('gemini-flash-latest')
                     lang_instruction = "Provide the summary and risk analysis in Hindi." if language == "Hindi (हिंदी)" else "Provide the summary and risk analysis in English."
-                    prompt = f"Analyze this legal document text. {lang_instruction} 1. Summarize the key facts. 2. Identify potential legal risks/loopholes. 3. Suggest next steps. Text: {text[:10000]}" # Limiting text for token safety
+                    prompt = f"Analyze this legal document text. {lang_instruction} 1. Summarize the key facts. 2. Identify potential legal risks/loopholes. 3. Suggest next steps. Text: {text[:10000]}"
                     
                     response = model.generate_content(prompt)
                     st.markdown("### Analysis Report")
@@ -226,7 +233,17 @@ def drafting_view(api_key, language):
     doc_type = st.selectbox("Document Type", ["Bail Application", "Writ Petition", "Affidavit", "Legal Notice"])
     
     with st.form("drafting_form"):
-        client_name = st.text_input("Client Name")
+        col1, col2 = st.columns(2)
+        client_name = col1.text_input("Client Name / ग्राहक का नाम")
+        
+        # Specific fields based on User Feedback (Law Students)
+        extra_details = ""
+        if doc_type == "Bail Application":
+            fir_no = col2.text_input("FIR Number / FIR संख्या")
+            police_station = st.text_input("Police Station / पुलिस थाना")
+            sections = st.text_input("IPC/CrPC Sections (e.g., 420, 498A)")
+            extra_details = f"FIR No: {fir_no}, Police Station: {police_station}, Sections: {sections}"
+            
         case_details = st.text_area("Key Facts / Grounds" if language == "English" else "मामले के तथ्य")
         submitted = st.form_submit_button("Generate Draft")
         
@@ -238,7 +255,13 @@ def drafting_view(api_key, language):
                     try:
                         model = genai.GenerativeModel('gemini-flash-latest')
                         lang_instruction = "Draft primarily in English but you can use Hindi legal terms if appropriate." if language == "Hindi (हिंदी)" else "Draft in English."
-                        prompt = f"Draft a professional legal {doc_type} for client '{client_name}' for Indian Courts. Facts: {case_details}. {lang_instruction} Use standard formatting."
+                        
+                        prompt = f"""Draft a professional legal {doc_type} for client '{client_name}' for Indian Courts.
+                        Details: {extra_details}
+                        Facts: {case_details}.
+                        {lang_instruction}
+                        Ensure strict legal formatting with 'The State vs {client_name}' header if applicable."""
+                        
                         response = model.generate_content(prompt)
                         st.subheader(f"Draft: {doc_type}")
                         st.text_area("Copy Draft", value=response.text, height=400)

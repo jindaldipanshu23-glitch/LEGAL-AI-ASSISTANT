@@ -2,7 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 from pypdf import PdfReader
 
-# Configure the page
+# Configure the page 
 st.set_page_config(
     page_title="High Court Legal Assistant",
     page_icon="⚖️",
@@ -15,23 +15,23 @@ st.markdown("""
 <style>
     /* Global Styles */
     .stApp {
-        background: linear-gradient(to bottom right, #f8f9fa, #e9ecef);
-        font-family: 'Merriweather', serif;
+        background-color: #ffffff;
+        font-family: 'Merriweather', serif; 
     }
     
     /* Headings with Gold Accent */
     h1, h2, h3 {
-        color: #1a252f;
+        color: #2c3e50;
         font-family: 'Playfair Display', serif;
         font-weight: 700;
-        border-bottom: 2px solid #c0392b; /* Legal Red accent */
+        border-bottom: 2px solid #d4af37; /* Elegant Gold */
         padding-bottom: 10px;
         display: inline-block;
     }
     
     /* Sidebar Styling */
     [data-testid="stSidebar"] {
-        background-color: #2c3e50;
+        background-color: #1a252f; /* Deep Charcoal */
     }
     [data-testid="stSidebar"] * {
         color: #ecf0f1 !important;
@@ -39,41 +39,41 @@ st.markdown("""
     
     /* Custom Buttons */
     .stButton > button {
-        background-color: #2980b9;
+        background-color: #2c3e50;
         color: white;
-        border-radius: 6px;
-        border: none;
+        border-radius: 4px;
+        border: 1px solid #d4af37;
         padding: 10px 24px;
-        font-weight: 600;
+        font-weight: 500;
         transition: all 0.3s ease;
     }
     .stButton > button:hover {
-        background-color: #3498db;
+        background-color: #d4af37;
+        color: #2c3e50;
+        border-color: #2c3e50;
         transform: translateY(-2px);
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
     
     /* Input Fields & Text Areas */
     .stTextInput > div > div > input, .stTextArea > div > div > textarea {
-        border-radius: 8px;
-        border: 2px solid #bdc3c7;
+        background-color: #fcfcfc;
+        border-radius: 6px;
+        border: 1px solid #bdc3c7;
         padding: 12px;
         font-size: 16px;
-        transition: border-color 0.3s;
     }
     .stTextInput > div > div > input:focus, .stTextArea > div > div > textarea:focus {
-        border-color: #2980b9;
-        box-shadow: 0 0 5px rgba(41, 128, 185, 0.3);
+        border-color: #2c3e50;
+        box-shadow: 0 0 5px rgba(44, 62, 80, 0.2);
     }
     
     /* Chat Messages */
     .stChatMessage {
-        background-color: #ffffff;
-        border-left: 5px solid #2980b9; /* User Color */
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        background-color: #f8f9fa;
+        border-left: 4px solid #d4af37; /* Gold Border */
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 10px;
     }
     [data-testid="stChatMessageAvatarBackground"] {
         background-color: #2c3e50;
@@ -81,11 +81,11 @@ st.markdown("""
     
     /* Dashboard Metrics Cards */
     [data-testid="stMetric"] {
-        background-color: white;
-        padding: 20px;
-        border-radius: 10px;
-        border: 1px solid #e0e0e0;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        background-color: #ffffff;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #eee;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 </style>
 """, unsafe_allow_html=True)
